@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Generate A Giphy!</title>
+    <!--Jquery link-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="assets/javascript.js"></script>
+    <!--linking javascript file-->
+    <style type="text/css">
+        img{
+        height: 100pt;
+        width: 100pt;
+        margin-top: 175pt;
+        align-items: left;
+        }
+        div {
+            margin: 10px;
+            align-items: left;
+        }
+
+        button,
+        form,
+        input {
+            float: left;
+            position: relative;
+            margin: 20px;
+        }
+
+        #giphy-form {
+            position: absolute;
+            padding: 20px;
+            top: 50px;
+            right: 100px;
+            border: 3px solid green;
+            
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="giphy-view"></div>
+        <form id="giphy-form">
+            <label form="giphy-input">Add A Giphy</label>
+            <input type="text" id="giphy-input">
+            <br>
+
+            <input id="add-giphy" type="submit" value="Add A Giphy">
+        </form>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+
+            var giphys = ["Dog", "Cat", "Horse", "Bat", "Rat", "Monkey", "Platypus"];
+
+            function renderButtons() {
+                $("#giphy-view").empty();
+
+                for (var i = 0; i < giphys.length; i++) {
+                    var giphyButton = $("<button>");
+                    giphyButton.addClass("giphyButton");
+                    giphyButton.attr("data-name", giphys[i]);
+                    giphyButton.text(giphys[i]);
+                    $("#giphy-view").append(giphyButton);
+                }
+            }
+
+            $("#add-giphy").on("click", function (event) {
+                event.preventDefault();
+                var giphy = $("#giphy-input").val().trim();
+                giphys.push(giphy);
+                renderButtons();
+            });
+
+            $(document).on("click", ".giphyButton", function (event) {
+                var word = $(this).attr("data-name");
+                console.log(word);
+                event.preventDefault();
+
+                var queryURL = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" + (word);
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                })
+                    .then(function (response) {
+                        var imageUrl = response.data.image_original_url;
+                        var giphyImage = $("<img>");
+                        giphyImage.addClass("giphyImage");
+                        giphyImage.attr("src", imageUrl);
+                        giphyImage.attr("alt", "giphy image");
+                        $("#giphy-view").append(giphyImage);
+                    });
+            });
+            
+//couldn't get gif to stop correctly
+            // $(document).on("click", ".giphyImage", function (event) {
+            //     $(".giphyImage").stop();
+            //     setTimeout(function() {
+            //         setInterval(function() {
+            //             $('.giphyImage').attr('src',$('.giphyImage').attr('src'))},1)}, 1000)
+            //     console.log("stop");
+            // });
+
+            renderButtons();
+        </script>
+    </div>
+</body>
+
+</html>
